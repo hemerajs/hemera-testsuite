@@ -5,6 +5,12 @@ Helper library to write tests against NATS.
 
 Include the `PATH` to the executable gnatsd.
 
+## Installing
+
+```
+npm i hemera-testsuite
+```
+
 ## Example
 
 ```js
