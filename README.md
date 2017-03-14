@@ -60,6 +60,8 @@ describe('Basic', function () {
       }, (err, resp) => {
         expect(err).not.to.be.exists()
         expect(resp.result).to.be.equals(3)
+        
+        hemera.close()
         done()
       })
 
