@@ -13,6 +13,7 @@ class NatsStub extends EventEmitter {
   timeout () { this.emit('mock.timeout', arguments) }
   publish () { this.emit('mock.publish', arguments) }
   subscribe () { this.emit('mock.subscribe', arguments) }
+  unsubscribe () { this.emit('mock.unsubscribe', arguments) }
   request () { this.emit('mock.request', arguments) }
 }
 
