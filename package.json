@@ -1,6 +1,6 @@
 {
   "name": "hemera-testsuite",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Helper library to write tests against NATS.",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/hemerajs/hemera-testsuite.git"
   },
-    "engines": {
+  "engines": {
     "node": ">=4.0.0"
   },
   "author": "Dustin Deus (https://github.com/StarpTech)",
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/hemerajs/hemera-testsuite/issues"
   },
-  "homepage": "https://github.com/hemerajs/hemera-testsuite#readme"
+  "homepage": "https://github.com/hemerajs/hemera-testsuite#readme",
+  "dependencies": {
+    "sinon": "^2.1.0"
+  }
 }

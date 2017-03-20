@@ -15,6 +15,7 @@ class NatsStub extends EventEmitter {
   subscribe () { this.emit('mock.subscribe', arguments) }
   unsubscribe () { this.emit('mock.unsubscribe', arguments) }
   request () { this.emit('mock.request', arguments) }
+  requestOne () { this.emit('mock.requestOne', arguments) }
 }
 
 module.exports = NatsStub
