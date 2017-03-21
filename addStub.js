@@ -3,7 +3,7 @@
 const Sinon = require('sinon')
 
 class AddStub {
-  static stub(hemera, pattern, request, cb) {
+  static run(hemera, pattern, request, cb) {
     const payload = hemera.router.lookup(pattern)
     if(payload) {
       payload.action.call(hemera, request, cb)
