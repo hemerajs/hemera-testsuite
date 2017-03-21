@@ -4,7 +4,7 @@ node_js:
   - "4"
 
 script:
-  - npm i && npm run ci
+  - npm i && npm run test
 
 before_script:
   # install nats

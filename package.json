@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha -t 5000 \"./test/**/*.js\"",
-    "coverage": "npm run test && nyc report --reporter=html",
-    "ci": "nyc mocha -t 5000 \"./test/**/*.js\"  && nyc report --reporter=text-lcov | coveralls"
+    "ci": "nyc mocha -t 5000 \"./test/**/*.js\""
   },
   "repository": {
     "type": "git",
