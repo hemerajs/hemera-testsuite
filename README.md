@@ -101,7 +101,7 @@ describe('Math', function () {
     const hemera = new Hemera(nats, {
       logLevel: 'info'
     })
-    const actStub = new ActStub()
+    const actStub = new ActStub(hemera)
 
     hemera.ready(function () {
       hemera.add({
@@ -114,9 +114,9 @@ describe('Math', function () {
       })
 
       // stub act calls
-      actStub.stub(hemera, { topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
-      actStub.stub(hemera, { topic: 'math', cmd: 'add' }, new Error('wrong arguments'))
-      actStub.stub(hemera, { topic: 'math', cmd: 'add', a: 100, b: 200 }, null, 300)
+      actStub.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
+      actStub.stub({ topic: 'math', cmd: 'add' }, new Error('wrong arguments'))
+      actStub.stub({ topic: 'math', cmd: 'add', a: 100, b: 200 }, null, 300)
 
       // Important run it when "add" was already added
       // Should execute the server method with the pattern topic:math,cmd:add,a:100,b:200"

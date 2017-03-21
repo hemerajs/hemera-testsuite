@@ -14,14 +14,14 @@ class ActStub {
    *
    * @memberOf ActStub
    */
-  constructor () {
+  constructor (hemera) {
     this.s = null
+    this.hemera = hemera
   }
 
   /**
    *
    *
-   * @param {any} hemera
    * @param {any} pattern
    * @param {any} error
    * @param {any} args
@@ -29,14 +29,14 @@ class ActStub {
    *
    * @memberOf ActStub
    */
-  stub (hemera, pattern, error, args) {
+  stub (pattern, error, args) {
     if (!this.s) {
-      this.s = Sinon.stub(hemera, 'act')
+      this.s = Sinon.stub(this.hemera, 'act')
     }
     return this.s.withArgs(pattern).callsFake(function (pattern, cb) {
       // respect act calls without a callback
       if (cb) {
-        return cb.call(hemera, error, args)
+        return cb.call(this.hemera, error, args)
       }
     })
   }
