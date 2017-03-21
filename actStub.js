@@ -9,7 +9,12 @@ class ActStub {
       stub = Sinon.stub(hemera, 'act')
     }
 
-    return stub.withArgs(pattern).callsArgOnWith(1, hemera, error, args)
+    return stub.withArgs(pattern).callsFake(function (pattern, cb) {
+      // respect act calls without a callback
+      if(cb) {
+        return cb.call(hemera, error, args)
+      }
+    })
   }
 }
 
