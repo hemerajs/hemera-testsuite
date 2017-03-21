@@ -10,7 +10,6 @@ const expect = Code.expect
 process.setMaxListeners(0)
 
 describe('Testsuite Stubing', function () {
-
   it('Should stub the add', function (done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
@@ -27,7 +26,25 @@ describe('Testsuite Stubing', function () {
         expect(result).to.be.equals(300)
         done()
       })
+    })
+  })
 
+  it('Should stub the add which returns an error', function (done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function () {
+      hemera.add({
+        topic: 'math',
+        cmd: 'add'
+      }, function (args, cb) {
+        cb(new Error('test'))
+      })
+
+      AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
+        expect(err).to.exists()
+        expect(err.message).to.be.equals('test')
+        done()
+      })
     })
   })
 
@@ -52,32 +69,6 @@ describe('Testsuite Stubing', function () {
         expect(result).to.be.equals(250)
         done()
       })
-
-    })
-  })
-
-  it('Should stub an act within a add method', function (done) {
-    const nats = new Nats()
-    const hemera = new Hemera(nats)
-    const actStub = new ActStub()
-    hemera.ready(function () {
-      hemera.add({
-        topic: 'math',
-        cmd: 'add'
-      }, function (args, cb) {
-        this.act({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, function (err, resp) {
-          cb(err, args.a + args.b - resp)
-        })
-      })
-
-      actStub.stub(hemera, { topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
-
-      AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
-        expect(err).to.be.not.exists()
-        expect(result).to.be.equals(250)
-        done()
-      })
-
     })
   })
 
@@ -106,7 +97,6 @@ describe('Testsuite Stubing', function () {
         expect(result).to.be.equals(250)
         done()
       })
-
     })
   })
 
@@ -122,13 +112,11 @@ describe('Testsuite Stubing', function () {
         cmd: 'add',
         a: 100,
         b: 200
-      }, function(err, result) {
-
+      }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(300)
         done()
       })
-
     })
   })
 
@@ -162,8 +150,7 @@ describe('Testsuite Stubing', function () {
         cmd: 'add',
         a: 100,
         b: 200
-      }, function(err, result) {
-
+      }, function (err, result) {
         expect(err).to.exists()
         expect(err.message).to.be.equals('test')
         done()
@@ -185,8 +172,7 @@ describe('Testsuite Stubing', function () {
         cmd: 'add',
         a: 300,
         b: 200
-      }, function(err, result) {
-
+      }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(500)
 
@@ -195,8 +181,7 @@ describe('Testsuite Stubing', function () {
           cmd: 'add',
           a: 200,
           b: 200
-        }, function(err, result) {
-
+        }, function (err, result) {
           expect(err).to.be.not.exists()
           expect(result).to.be.equals(400)
           hemera.act({
@@ -204,8 +189,7 @@ describe('Testsuite Stubing', function () {
             cmd: 'add',
             a: 100,
             b: 200
-          }, function(err, result) {
-
+          }, function (err, result) {
             expect(err).to.be.not.exists()
             expect(result).to.be.equals(300)
             done()
