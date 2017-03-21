@@ -1,11 +1,27 @@
 'use strict'
 
-const Sinon = require('sinon')
-
+/**
+ *
+ *
+ * @class AddStub
+ */
 class AddStub {
-  static run(hemera, pattern, request, cb) {
+
+  /**
+   *
+   *
+   * @static
+   * @param {any} hemera
+   * @param {any} pattern
+   * @param {any} request
+   * @param {any} cb
+   * @returns
+   *
+   * @memberOf AddStub
+   */
+  static run (hemera, pattern, request, cb) {
     const payload = hemera.router.lookup(pattern)
-    if(payload) {
+    if (payload) {
       payload.action.call(hemera, request, cb)
       return payload
     }

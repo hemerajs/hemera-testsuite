@@ -1,20 +1,56 @@
 'use strict'
 
 const Sinon = require('sinon')
-let stub = null
 
+/**
+ *
+ *
+ * @class ActStub
+ */
 class ActStub {
-  static stub(hemera, pattern, error, args) {
-    if (!stub) {
-      stub = Sinon.stub(hemera, 'act')
-    }
 
-    return stub.withArgs(pattern).callsFake(function (pattern, cb) {
+  /**
+   * Creates an instance of ActStub.
+   *
+   * @memberOf ActStub
+   */
+  constructor () {
+    this.s = null
+  }
+
+  /**
+   *
+   *
+   * @param {any} hemera
+   * @param {any} pattern
+   * @param {any} error
+   * @param {any} args
+   * @returns
+   *
+   * @memberOf ActStub
+   */
+  stub (hemera, pattern, error, args) {
+    if (!this.s) {
+      this.s = Sinon.stub(hemera, 'act')
+    }
+    return this.s.withArgs(pattern).callsFake(function (pattern, cb) {
       // respect act calls without a callback
-      if(cb) {
+      if (cb) {
         return cb.call(hemera, error, args)
       }
     })
+  }
+
+  /**
+   *
+   *
+   *
+   * @memberOf ActStub
+   */
+  restore () {
+    if (this.s) {
+      this.s.restore()
+    }
   }
 }
 

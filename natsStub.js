@@ -2,6 +2,12 @@
 
 const EventEmitter = require('events')
 
+/**
+ *
+ *
+ * @class NatsStub
+ * @extends {EventEmitter}
+ */
 class NatsStub extends EventEmitter {
   constructor () {
     super()
