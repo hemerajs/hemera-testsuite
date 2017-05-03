@@ -33,12 +33,16 @@ class ActStub {
     if (!this.s) {
       this.s = Sinon.stub(this.hemera, 'act')
     }
-    return this.s.withArgs(pattern).callsFake(function (pattern, cb) {
+    this.s.withArgs(pattern).callsFake((pattern, cb) => {
       // respect act calls without a callback
       if (cb) {
         return cb.call(this.hemera, error, args)
       }
     })
+
+    this.s.callThrough()
+    
+    return this.s
   }
 
   /**
