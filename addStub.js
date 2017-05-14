@@ -25,7 +25,7 @@ class AddStub {
       payload.action.call(hemera, request, cb)
       return payload
     }
-    throw new Error('Pattern not found. Please check that you added your server method before you stub it.')
+    throw new Error('Pattern not found. Please check that you added your server method before you run it.')
   }
 }
 
