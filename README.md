@@ -152,4 +152,4 @@ describe('Math', function () {
 ```
 
 ## Credits
-Thanks to https://github.com/nats-io/node-nats for providing the script to bootstrap the server.
+Thanks to [node-nats](https://github.com/nats-io/node-nats) for providing the script to bootstrap the server.
