@@ -9,7 +9,7 @@ Helper library to write tests against NATS.
 ## Use cases
 
 - You want to create an integration test (cluster support)
-- You want to run your system but have to mock some interfaces
+- You want to run your system but have to mock some external services
 - You want to test specific implementations without to start NATS
 
 ## Prerequisites
