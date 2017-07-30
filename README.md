@@ -6,6 +6,12 @@
 # hemera-testsuite
 Helper library to write tests against NATS.
 
+## Use cases
+
+- You want to create an integration test (cluster support)
+- You want to run your system but have to mock some external services
+- You want to test specific implementations without to start NATS
+
 ## Prerequisites
 
 Include the `PATH` to the executable gnatsd.
@@ -81,6 +87,9 @@ describe('Basic', function () {
 
 We do not emulate the NATS messaging system we only stub the interface to don't run into an error.
 
+Whats is stubbing?
+> Test stubs are functions (spies) with pre-programmed behavior.
+
 ```js
 'use strict'
 
@@ -143,4 +152,4 @@ describe('Math', function () {
 ```
 
 ## Credits
-Thanks to https://github.com/nats-io/node-nats for providing the script to bootstrap the server.
+Thanks to [node-nats](https://github.com/nats-io/node-nats) for providing the script to bootstrap the server.
