@@ -8,7 +8,6 @@ const Sinon = require('sinon')
  * @class ActStub
  */
 class ActStub {
-
   /**
    * Creates an instance of ActStub.
    *
@@ -41,7 +40,7 @@ class ActStub {
     })
 
     this.s.callThrough()
-    
+
     return this.s
   }
 

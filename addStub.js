@@ -6,7 +6,6 @@
  * @class AddStub
  */
 class AddStub {
-
   /**
    *
    *
