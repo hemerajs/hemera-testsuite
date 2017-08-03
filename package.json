@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha -t 5000 \"./test/**/*.js\"",
-    "ci": "nyc mocha -t 5000 \"./test/**/*.js\""
+    "patch": "np patch --yolo",
+    "minor": "np minor --yolo",
+    "major": "np major --yolo"
   },
   "repository": {
     "type": "git",
