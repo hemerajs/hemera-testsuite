@@ -24,7 +24,7 @@ describe('Testsuite Stubing', function () {
       AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(300)
-        done()
+        hemera.close(done)
       })
     })
   })
@@ -43,7 +43,7 @@ describe('Testsuite Stubing', function () {
       AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
         expect(err).to.exists()
         expect(err.message).to.be.equals('test')
-        done()
+        hemera.close(done)
       })
     })
   })
@@ -67,7 +67,7 @@ describe('Testsuite Stubing', function () {
       AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(250)
-        done()
+        hemera.close(done)
       })
     })
   })
@@ -95,7 +95,7 @@ describe('Testsuite Stubing', function () {
       AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(250)
-        done()
+        hemera.close(done)
       })
     })
   })
@@ -115,7 +115,7 @@ describe('Testsuite Stubing', function () {
       }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(300)
-        done()
+        hemera.close(done)
       })
     })
   })
@@ -134,7 +134,7 @@ describe('Testsuite Stubing', function () {
         b: 200
       })
 
-      done()
+      hemera.close(done)
     })
   })
 
@@ -153,7 +153,7 @@ describe('Testsuite Stubing', function () {
       }, function (err, result) {
         expect(err).to.exists()
         expect(err.message).to.be.equals('test')
-        done()
+        hemera.close(done)
       })
     })
   })
@@ -192,7 +192,7 @@ describe('Testsuite Stubing', function () {
           }, function (err, result) {
             expect(err).to.be.not.exists()
             expect(result).to.be.equals(300)
-            done()
+            hemera.close(done)
           })
         })
       })
