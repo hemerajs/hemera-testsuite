@@ -33,13 +33,12 @@ const expect = Code.expect
 describe('Basic', function () {
 
   const PORT = 6242
-  const authUrl = 'nats://derek:foobar@localhost:' + PORT
   const noAuthUrl = 'nats://localhost:' + PORT
   let server
 
   // Start up our own nats-server
   before(function (done) {
-    server = HemeraTestsuite.start_server(PORT, flags, done)
+    server = HemeraTestsuite.start_server(PORT, done)
   })
 
   // Shutdown our server after we are done
@@ -49,7 +48,7 @@ describe('Basic', function () {
 
   it('Test', function(done) {
 
-    const nats = require('nats').connect(authUrl)
+    const nats = require('nats').connect(noAuthUrl)
 
     const hemera = new Hemera(nats)
 
