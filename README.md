@@ -22,6 +22,20 @@ Include the `PATH` to the executable gnatsd.
 npm i hemera-testsuite
 ```
 
+## Test the implementation of a specific server method
+```js
+AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
+  expect(err).to.be.not.exists()
+  expect(result).to.be.equals(250)
+})
+```
+
+## Mock the result of a service call
+```js
+const actStub = new ActStub(hemera)
+actStub.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
+```
+
 ## Integration test
 
 ```js
