@@ -72,6 +72,21 @@ describe('Testsuite Stubing', function () {
     })
   })
 
+  it('Should stub on partial matches', function (done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    const actStub = new ActStub(hemera)
+    hemera.ready(function () {
+      actStub.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
+
+      this.act({ topic: 'math', cmd: 'sub', a: 100, b: 50, data: { foo: 'bar' } }, (err, resp) => {
+        expect(err).to.be.not.exists()
+        expect(resp).to.be.equals(50)
+        hemera.close(done)
+      })
+    })
+  })
+
   it('Should stub an add method with middleware', function (done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)

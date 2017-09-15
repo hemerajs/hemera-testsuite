@@ -29,13 +29,22 @@ class ActStub {
    * @memberOf ActStub
    */
   stub (pattern, error, args) {
+    const self = this
     if (!this.s) {
       this.s = Sinon.stub(this.hemera, 'act')
     }
-    this.s.withArgs(pattern).callsFake((pattern, cb) => {
-      // respect act calls without a callback
-      if (cb) {
-        return cb.call(this.hemera, error, args)
+
+    self.hemera.router.add(pattern, {
+      error: error,
+      args: args
+    })
+
+    this.s.callsFake((p, cb) => {
+      const lookup = this.hemera.router.lookup(p)
+      if (lookup) {
+        if (cb) {
+          return cb.call(this.hemera, lookup.error, lookup.args)
+        }
       }
     })
 
