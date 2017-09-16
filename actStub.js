@@ -1,7 +1,6 @@
 'use strict'
 
 const Sinon = require('sinon')
-const strictEquals = require('assert').deepStrictEqual
 
 /**
  *
