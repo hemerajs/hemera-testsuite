@@ -72,21 +72,6 @@ describe('Testsuite Stubing', function () {
     })
   })
 
-  it('Should stub on partial matches', function (done) {
-    const nats = new Nats()
-    const hemera = new Hemera(nats)
-    const actStub = new ActStub(hemera)
-    hemera.ready(function () {
-      actStub.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
-
-      this.act({ topic: 'math', cmd: 'sub', a: 100, b: 50, data: { foo: 'bar' } }, (err, resp) => {
-        expect(err).to.be.not.exists()
-        expect(resp).to.be.equals(50)
-        hemera.close(done)
-      })
-    })
-  })
-
   it('Should stub an add method with middleware', function (done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
@@ -130,6 +115,49 @@ describe('Testsuite Stubing', function () {
       }, function (err, result) {
         expect(err).to.be.not.exists()
         expect(result).to.be.equals(300)
+        hemera.close(done)
+      })
+    })
+  })
+
+  it('Should stub an act method with nested structure', function (done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    const actStub = new ActStub(hemera)
+    hemera.ready(function () {
+      actStub.stub({ topic: 'math', cmd: 'add', a: 100, b: 200, user: { email: 'test123@gmail.com' } }, null, 300)
+      actStub.stub({ topic: 'math', cmd: 'add', a: 200, b: 200, user: { email: 'test@gmail.com' } }, null, 400)
+
+      hemera.act({
+        topic: 'math',
+        cmd: 'add',
+        a: 200,
+        b: 200,
+        user: { email: 'test@gmail.com' }
+      }, function (err, result) {
+        expect(err).to.be.not.exists()
+        expect(result).to.be.equals(400)
+        hemera.close(done)
+      })
+    })
+  })
+
+  it('Should stub partial an act method', function (done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    const actStub = new ActStub(hemera)
+    hemera.ready(function () {
+      actStub.stubPartial({ topic: 'math', cmd: 'add', a: 200, b: 200 }, null, 400)
+
+      hemera.act({
+        topic: 'math',
+        cmd: 'add',
+        a: 200,
+        b: 200,
+        user: { email: 'test123@gmail.com' }
+      }, function (err, result) {
+        expect(err).to.be.not.exists()
+        expect(result).to.be.equals(400)
         hemera.close(done)
       })
     })

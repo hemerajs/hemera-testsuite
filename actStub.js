@@ -1,6 +1,7 @@
 'use strict'
 
 const Sinon = require('sinon')
+const strictEquals = require('assert').deepStrictEqual
 
 /**
  *
@@ -29,22 +30,38 @@ class ActStub {
    * @memberOf ActStub
    */
   stub (pattern, error, args) {
-    const self = this
     if (!this.s) {
       this.s = Sinon.stub(this.hemera, 'act')
     }
 
-    self.hemera.router.add(pattern, {
-      error: error,
-      args: args
+    this.s.withArgs(pattern).callsFake((pattern, cb) => {
+      if (cb) {
+        return cb.call(this.hemera, error, args)
+      }
     })
 
-    this.s.callsFake((p, cb) => {
-      const lookup = this.hemera.router.lookup(p)
-      if (lookup) {
-        if (cb) {
-          return cb.call(this.hemera, lookup.error, lookup.args)
-        }
+    this.s.callThrough()
+
+    return this.s
+  }
+
+  /**
+   * 
+   * 
+   * @param {any} pattern 
+   * @param {any} error 
+   * @param {any} args 
+   * @returns 
+   * @memberof ActStub
+   */
+  stubPartial (pattern, error, args) {
+    if (!this.s) {
+      this.s = Sinon.stub(this.hemera, 'act')
+    }
+
+    this.s.withArgs(Sinon.match(pattern)).callsFake((pattern, cb) => {
+      if (cb) {
+        return cb.call(this.hemera, error, args)
       }
     })
 

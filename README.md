@@ -34,6 +34,7 @@ AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function 
 ```js
 const actStub = new ActStub(hemera)
 actStub.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
+actStub.stubPartial({ topic: 'math', cmd: 'sub' }, null, 50)
 ```
 
 ## Integration test
