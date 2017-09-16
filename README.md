@@ -42,6 +42,7 @@ stub2.restore()
 ```
 
 ## Mock the nats server in combination with addStub and actStub
+We don't emulate the functionality of the NATS server. If you need it please run a real NATS server and stub some service calls.
 ```js
 const Nats = require('hemera-testsuite/natsStub')
 const nats = new Nats()
