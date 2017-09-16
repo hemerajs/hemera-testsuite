@@ -41,19 +41,27 @@ stub1.restore() // Sinonjs api
 stub2.restore()
 ```
 
-## Integration test
+## Mock the nats server in combination with addStub and actStub
+```js
+const Nats = require('hemera-testsuite/natsStub')
+const nats = new Nats()
+const hemera = new Hemera(nats, {
+  logLevel: 'info'
+})
+const actStub = new ActStub(hemera)
+```
 
-- Real NATS Server is running but some act calls can be mocked.
+## Full Integration test
+
+- Run your tests against a real NATS server
 
 [Example](https://github.com/hemerajs/hemera/blob/master/test/hemera/index.spec.js)
 
 ## Unit test
 
-- We do not emulate the NATS messaging system we only stub the interface to don't run into an error.
+- Use act stubs to mock the result of a service call
 
 [Example](https://github.com/hemerajs/hemera/blob/master/examples/testing/unittest.js)
-
-```
 
 ## Credits
 Thanks to [node-nats](https://github.com/nats-io/node-nats) for providing the script to bootstrap the server.
