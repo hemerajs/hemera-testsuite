@@ -38,6 +38,8 @@ actStub.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
 
 ## Integration test
 
+- Real NATS Server is running but some act calls can be mocked.
+
 ```js
 const Hemera = require('nats-hemera')
 const HemeraTestsuite = require('hemera-testsuite')
@@ -98,7 +100,7 @@ describe('Basic', function () {
 
 ## Unit test
 
-We do not emulate the NATS messaging system we only stub the interface to don't run into an error.
+- We do not emulate the NATS messaging system we only stub the interface to don't run into an error.
 
 Whats is stubbing?
 > Test stubs are functions (spies) with pre-programmed behavior.
