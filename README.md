@@ -24,8 +24,8 @@ npm i hemera-testsuite
 
 ## Test the implementation of a specific server method `hemera.add`
 ```js
-const a = require('hemera-testsuite/addStub')
-as.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
+const AddStub = require('hemera-testsuite/addStub')
+AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
   expect(err).to.be.not.exists()
   expect(result).to.be.equals(250)
 })
@@ -34,7 +34,7 @@ as.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err,
 ## Mock the result of a service call `hemera.act`
 ```js
 const ActStub = require('hemera-testsuite/actStub')
-const a = new ActStub(hemera)
+const as = new ActStub(hemera)
 const stub1 = as.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
 const stub2 = as.stubPartial({ topic: 'math', cmd: 'sub' }, null, 50)
 stub1.restore() // Sinonjs api
@@ -45,6 +45,9 @@ stub2.restore()
 We don't emulate the functionality of the NATS server. If you need it please run a real NATS server and stub some service calls.
 ```js
 const Nats = require('hemera-testsuite/natsStub')
+const ActStub = require('hemera-testsuite/actStub')
+const AddStub = require('hemera-testsuite/addStub')
+
 const nats = new Nats()
 const hemera = new Hemera(nats, {
   logLevel: 'info'
