@@ -19,8 +19,7 @@ hemera.ready(() => {
 
       this.act(
         {
-          topic: 'math.constants.pi',
-          cmd: 'sub'
+          topic: 'math.constants.pi'
         },
         function(err, resp) {
           if (err) {
