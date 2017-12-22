@@ -68,6 +68,54 @@ describe('NATS Transport fake', function() {
     })
   })
 
+  it('Should fake auto unsubscribe after maxMessages$ messages', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats, { timeout: 200 })
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          maxMessages$: 1
+        },
+        req => req.a + req.b
+      )
+      hemera
+        .act(`topic:math,a:1,b:2`)
+        .then(() => hemera.act(`topic:math,a:1,b:2`))
+        .catch(err => {
+          expect(err.message).to.be.equal('Timeout')
+          done()
+        })
+    })
+  })
+
+  it('Should fake auto unsubscribe after maxMessages$ messages defined in act', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats, { timeout: 200 })
+    let count = 0
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math'
+        },
+        (req, reply) => {
+          for (let i = 0; i < 5; i++) {
+            reply(null, i)
+          }
+        }
+      )
+      hemera.act(
+        {
+          topic: 'math',
+          maxMessages$: 1
+        },
+        (err, resp) => {
+          done()
+        }
+      )
+    })
+  })
+
   it('Should fake a publish', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { logLevel: 'info' })

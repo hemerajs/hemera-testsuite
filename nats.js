@@ -16,6 +16,7 @@ class NatsStub extends Eventemitter2 {
   constructor() {
     super({ delimiter: '.', wildcard: true })
     this.subId = 0
+    this.subs = new Map()
     this.timeoutMap = new Map()
     setImmediate(() => {
       this.emit('connect')
@@ -37,7 +38,12 @@ class NatsStub extends Eventemitter2 {
    * @memberof NatsStub
    */
   timeout(sid, timeout, delay, handler) {
-    this.timeoutMap.set(sid, setTimeout(() => handler(), timeout).unref())
+    this.timeoutMap.set(sid, {
+      timeout,
+      delay,
+      handler,
+      timer: setTimeout(() => handler(), timeout).unref()
+    })
   }
 
   /**
@@ -47,7 +53,11 @@ class NatsStub extends Eventemitter2 {
    */
   publish(topic, payload, handler) {
     this.emit(topic, { payload })
-    setImmediate(() => handler())
+    setImmediate(() => {
+      if (handler) {
+        handler()
+      }
+    })
   }
 
   /**
@@ -56,10 +66,19 @@ class NatsStub extends Eventemitter2 {
    * @memberof NatsStub
    */
   request(topic, payload, opts, handler) {
-    const replyTo = `topic_${this.subId++}`
-    this.once(replyTo, event => {
-      clearTimeout(this.timeoutMap.get(replyTo))
-      setImmediate(() => handler(event.payload))
+    const subData = { max: opts.max || 1, id: this.subId++ }
+    const replyTo = `topic_${subData.id++}`
+    this.subs.set(replyTo, subData)
+
+    this.many(replyTo, subData.max, event => {
+      const sub = this.subs.get(replyTo)
+      const timeout = this.timeoutMap.get(replyTo)
+      sub.max -= 1
+      clearTimeout(timeout.timer)
+      if (sub.max > 0) {
+        this.timeout(replyTo, timeout.timeout, timeout.delay, timeout.handler)
+      }
+      handler(event.payload)
     })
     this.emit(topic, { payload, replyTo })
     return replyTo
