@@ -5,8 +5,8 @@ const Nats = require('../nats')
 const Code = require('code')
 const expect = Code.expect
 
-describe('NATS Transport fake', function() {
-  it('Should fake a request', function(done) {
+describe('NATS Transport emulation', function() {
+  it('Should request', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
@@ -24,7 +24,7 @@ describe('NATS Transport fake', function() {
     })
   })
 
-  it('Should fake multiple request', function(done) {
+  it('Should request multiple times', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
@@ -49,7 +49,7 @@ describe('NATS Transport fake', function() {
   /**
    * The asterisk character (*) matches any token at any level of the subject.
    */
-  it('Should fake wildcard subjects', function(done) {
+  it('Should handle wildcard subjects', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
@@ -72,7 +72,7 @@ describe('NATS Transport fake', function() {
    * matches one or more tokens at the tail of a subject, and must be the last token.
    * The wildcarded subject foo.> will match foo.bar or foo.bar.baz.1, but not foo.
    */
-  it('Should fake > (greater than) subjects', function(done) {
+  it('Should handle > (greater than) subjects', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
@@ -90,7 +90,7 @@ describe('NATS Transport fake', function() {
     })
   })
 
-  it('Should fake auto unsubscribe after maxMessages$ messages', function(done) {
+  it('Should auto unsubscribe after maxMessages$ messages', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     hemera.ready(function() {
@@ -111,7 +111,7 @@ describe('NATS Transport fake', function() {
     })
   })
 
-  it('Should fake auto unsubscribe after maxMessages$ messages defined in act', function(done) {
+  it('Should auto unsubscribe after maxMessages$ messages defined on client', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     let count = 0
@@ -138,7 +138,7 @@ describe('NATS Transport fake', function() {
     })
   })
 
-  it('Should fake a publish', function(done) {
+  it('Should publish', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { logLevel: 'info' })
     hemera.ready(function() {
@@ -155,7 +155,7 @@ describe('NATS Transport fake', function() {
     })
   })
 
-  it('Should fake multiple publish', function(done) {
+  it('Should publish multiple times', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { logLevel: 'info' })
     hemera.ready(function() {
