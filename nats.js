@@ -5,13 +5,13 @@ const Eventemitter2 = require('eventemitter2').EventEmitter2
 /**
  *
  *
- * @class NatsStub
+ * @class Nats
  * @extends {EventEmitter}
  */
-class NatsStub extends Eventemitter2 {
+class Nats extends Eventemitter2 {
   /**
-   * Creates an instance of NatsStub.
-   * @memberof NatsStub
+   * Creates an instance of Nats.
+   * @memberof Nats
    */
   constructor() {
     super({ delimiter: '.', wildcard: true })
@@ -26,7 +26,7 @@ class NatsStub extends Eventemitter2 {
   /**
    *
    *
-   * @memberof NatsStub
+   * @memberof Nats
    */
   close(handler) {
     setImmediate(() => handler())
@@ -35,7 +35,7 @@ class NatsStub extends Eventemitter2 {
   /**
    *
    *
-   * @memberof NatsStub
+   * @memberof Nats
    */
   timeout(sid, timeout, delay, handler) {
     this.timeoutMap.set(sid, {
@@ -49,7 +49,7 @@ class NatsStub extends Eventemitter2 {
   /**
    *
    *
-   * @memberof NatsStub
+   * @memberof Nats
    */
   publish(topic, payload, handler) {
     this.emit(topic, { payload })
@@ -63,7 +63,7 @@ class NatsStub extends Eventemitter2 {
   /**
    *
    *
-   * @memberof NatsStub
+   * @memberof Nats
    */
   request(topic, payload, opts, handler) {
     const subData = { max: opts.max || 1, id: this.subId++ }
@@ -83,16 +83,18 @@ class NatsStub extends Eventemitter2 {
       if (sub.max > 0) {
         this.timeout(replyTo, timeout.timeout, timeout.delay, timeout.handler)
       }
-      handler(event.payload)
+      setImmediate(() => handler(event.payload))
     })
+
     this.emit(topic, { payload, replyTo })
+
     return replyTo
   }
 
   /**
    *
    *
-   * @memberof NatsStub
+   * @memberof Nats
    */
   subscribe(topic, opts, handler) {
     // The greater than symbol (>), also known as the full wildcard, matches one or more tokens at the tail of a subject, and must be the last token.
@@ -105,7 +107,7 @@ class NatsStub extends Eventemitter2 {
   /**
    *
    *
-   * @memberof NatsStub
+   * @memberof Nats
    */
   unsubscribe(topic) {
     this.removeListener(topic)
@@ -115,7 +117,7 @@ class NatsStub extends Eventemitter2 {
    *
    *
    * @param {any} cb
-   * @memberof NatsStub
+   * @memberof Nats
    */
   flush(cb) {
     if (typeof cb === 'function') {
@@ -124,4 +126,4 @@ class NatsStub extends Eventemitter2 {
   }
 }
 
-module.exports = NatsStub
+module.exports = Nats
