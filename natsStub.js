@@ -13,8 +13,10 @@ class NatsStub extends EventEmitter {
    * Creates an instance of NatsStub.
    * @memberof NatsStub
    */
-  constructor () {
+  constructor() {
     super()
+    this.subId = 0
+    this.timeoutMap = new Map()
     setImmediate(() => {
       this.emit('connect')
     })
@@ -25,42 +27,63 @@ class NatsStub extends EventEmitter {
    *
    * @memberof NatsStub
    */
-  close () { this.emit('mock.close', arguments) }
+  close(handler) {
+    setImmediate(() => handler())
+  }
 
   /**
    *
    *
    * @memberof NatsStub
    */
-  timeout () { this.emit('mock.timeout', arguments) }
+  timeout(sid, timeout, delay, handler) {
+    this.timeoutMap.set(sid, setTimeout(() => handler(), timeout).unref())
+  }
 
   /**
    *
    *
    * @memberof NatsStub
    */
-  publish () { this.emit('mock.publish', arguments) }
+  publish(topic, payload, handler) {
+    this.emit(topic, { payload })
+    setImmediate(() => handler())
+  }
 
   /**
    *
    *
    * @memberof NatsStub
    */
-  subscribe () { this.emit('mock.subscribe', arguments) }
+  request(topic, payload, opts, handler) {
+    const replyTo = `topic_${this.subId++}`
+    this.once(replyTo, event => {
+      clearTimeout(this.timeoutMap.get(replyTo))
+      setImmediate(() => handler(event.payload))
+    })
+    this.emit(topic, { payload, replyTo })
+    return replyTo
+  }
 
   /**
    *
    *
    * @memberof NatsStub
    */
-  unsubscribe () { this.emit('mock.unsubscribe', arguments) }
+  subscribe(topic, opts, handler) {
+    this.on(topic, event => {
+      setImmediate(() => handler(event.payload, event.replyTo))
+    })
+  }
 
   /**
    *
    *
    * @memberof NatsStub
    */
-  request () { this.emit('mock.request', arguments) }
+  unsubscribe(topic) {
+    this.removeListener(topic)
+  }
 
   /**
    *
@@ -68,7 +91,7 @@ class NatsStub extends EventEmitter {
    * @param {any} cb
    * @memberof NatsStub
    */
-  flush (cb) {
+  flush(cb) {
     if (typeof cb === 'function') {
       cb()
     }
