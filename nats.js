@@ -68,6 +68,11 @@ class NatsStub extends Eventemitter2 {
   request(topic, payload, opts, handler) {
     const subData = { max: opts.max || 1, id: this.subId++ }
     const replyTo = `topic_${subData.id++}`
+
+    if (subData.max === -1) {
+      subData.max = Number.MAX_SAFE_INTEGER
+    }
+
     this.subs.set(replyTo, subData)
 
     this.many(replyTo, subData.max, event => {
