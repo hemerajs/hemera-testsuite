@@ -9,12 +9,11 @@ Helper library to write tests against NATS.
 ## Use cases
 
 - You want to create an integration test (cluster support)
-- You want to run your system but have to mock some external services
-- You want to test specific implementations without to start NATS
+- You want to run in-memory tests
 
 ## Prerequisites
 
-Include the `PATH` to the executable gnatsd.
+Include the `PATH` to the executable gnatsd. (Only needed for integration tests)
 
 ## Installing
 
@@ -22,37 +21,22 @@ Include the `PATH` to the executable gnatsd.
 npm i hemera-testsuite
 ```
 
-## Test the implementation of a specific server method `hemera.add`
-```js
-const AddStub = require('hemera-testsuite/addStub')
-AddStub.run(hemera, { topic: 'math', cmd: 'add' }, { a: 100, b: 200 }, function (err, result) {
-  expect(err).to.be.not.exists()
-  expect(result).to.be.equals(250)
-})
-```
+## Emulate NATS
+We emulate all features of NATS server. You can run and test your service in memory.
 
-## Mock the result of a service call `hemera.act`
-```js
-const ActStub = require('hemera-testsuite/actStub')
-const as = new ActStub(hemera)
-const stub1 = as.stub({ topic: 'math', cmd: 'sub', a: 100, b: 50 }, null, 50)
-const stub2 = as.stubPartial({ topic: 'math', cmd: 'sub' }, null, 50)
-stub1.restore() // Sinonjs api
-stub2.restore()
-```
+### Features
 
-## Mock the nats server in combination with addStub and actStub
-We don't emulate the functionality of the NATS server. If you need it please run a real NATS server and stub some service calls.
-```js
-const Nats = require('hemera-testsuite/natsStub')
-const ActStub = require('hemera-testsuite/actStub')
-const AddStub = require('hemera-testsuite/addStub')
+- Support of wildcard `*` and `>` subjects
+- Support for auto-unsubscribe after `max` messages
+- Support for request & publish
+- Support for timeouts
 
+```js
+const Nats = require('hemera-testsuite/nats')
 const nats = new Nats()
 const hemera = new Hemera(nats, {
   logLevel: 'info'
 })
-const actStub = new ActStub(hemera)
 ```
 
 ## Full Integration test
@@ -60,12 +44,6 @@ const actStub = new ActStub(hemera)
 - Run your tests against a real NATS server
 
 [Example](https://github.com/hemerajs/hemera/blob/master/test/hemera/index.spec.js)
-
-## Unit test
-
-- Use act stubs to mock the result of a service call
-
-[Example](https://github.com/hemerajs/hemera/blob/master/examples/testing/unittest.js)
 
 ## Credits
 Thanks to [node-nats](https://github.com/nats-io/node-nats) for providing the script to bootstrap the server.
