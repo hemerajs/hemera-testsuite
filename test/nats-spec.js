@@ -5,7 +5,7 @@ const Nats = require('../natsStub')
 const Code = require('code')
 const expect = Code.expect
 
-describe.only('NATS Transport fake', function() {
+describe('NATS Transport fake', function() {
   it('Should fake a request', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
