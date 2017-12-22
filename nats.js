@@ -1,6 +1,6 @@
 'use strict'
 
-const EventEmitter = require('events')
+const Eventemitter2 = require('eventemitter2').EventEmitter2
 
 /**
  *
@@ -8,13 +8,13 @@ const EventEmitter = require('events')
  * @class NatsStub
  * @extends {EventEmitter}
  */
-class NatsStub extends EventEmitter {
+class NatsStub extends Eventemitter2 {
   /**
    * Creates an instance of NatsStub.
    * @memberof NatsStub
    */
   constructor() {
-    super()
+    super({ delimiter: '.', wildcard: true })
     this.subId = 0
     this.timeoutMap = new Map()
     setImmediate(() => {
@@ -71,7 +71,9 @@ class NatsStub extends EventEmitter {
    * @memberof NatsStub
    */
   subscribe(topic, opts, handler) {
-    this.on(topic, event => {
+    // The greater than symbol (>), also known as the full wildcard, matches one or more tokens at the tail of a subject, and must be the last token.
+    topic = topic.replace(/>/g, '**')
+    this.many(topic, opts.max || Number.MAX_SAFE_INTEGER, event => {
       setImmediate(() => handler(event.payload, event.replyTo))
     })
   }

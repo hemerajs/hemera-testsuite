@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/hemerajs/hemera-testsuite#readme",
   "dependencies": {
-    "sinon": "2.4.x"
+    "eventemitter2": "5.0.x"
   },
   "devDependencies": {
     "code": "^4.1.0",
