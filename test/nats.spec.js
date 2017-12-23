@@ -24,18 +24,19 @@ describe('NATS Transport emulation', function() {
     })
   })
 
-  it('Should request with multiple patterns', function(done) {
+  it('Should request to one subscription', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
+    let callCount = 0
     hemera.ready(function() {
       hemera.add(
         {
           topic: 'math',
-          cmd: 'add',
-          c: 3
+          cmd: 'add'
         },
         req => {
-          throw new Error('test')
+          callCount++
+          return req.a + req.b
         }
       )
       hemera.add(
@@ -43,51 +44,14 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           cmd: 'add'
         },
-        req => req.a + req.b
+        req => {
+          callCount++
+          return req.a + req.b
+        }
       )
       hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
         expect(resp).to.be.equals(3)
-        done()
-      })
-    })
-  })
-
-  it('Should request multiple times', function(done) {
-    const nats = new Nats()
-    const hemera = new Hemera(nats)
-    hemera.ready(function() {
-      hemera.add(
-        {
-          topic: 'math',
-          cmd: 'add'
-        },
-        req => req.a + req.b
-      )
-      Promise.all([
-        hemera.act(`topic:math,cmd:add,a:1,b:2`),
-        hemera.act(`topic:math,cmd:add,a:10,b:20`)
-      ]).then(result => {
-        expect(result[0]).to.be.equals(3)
-        expect(result[1]).to.be.equals(30)
-        done()
-      })
-    })
-  })
-
-  it('Should use custom queue groups', function(done) {
-    const nats = new Nats()
-    const hemera = new Hemera(nats)
-    hemera.ready(function() {
-      hemera.add(
-        {
-          topic: 'math',
-          cmd: 'add',
-          queue$: 'test'
-        },
-        req => req.a + req.b
-      )
-      hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
-        expect(resp).to.be.equals(3)
+        expect(callCount).to.be.equals(1)
         done()
       })
     })
@@ -158,7 +122,7 @@ describe('NATS Transport emulation', function() {
     })
   })
 
-  it('Should auto unsubscribe after maxMessages$ messages defined on client', function(done) {
+  it('Should auto unsubscribe after maxMessages$ messages defined on client-side', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     let count = 0

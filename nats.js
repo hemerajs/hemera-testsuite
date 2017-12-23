@@ -15,8 +15,8 @@ class Nats extends Eventemitter2 {
    */
   constructor() {
     super({ delimiter: '.', wildcard: true })
-    this.subId = 0
-    this.inboxId = 0
+    this.subId = 1
+    this.inboxId = 1
     this.subscriptions = new Map()
     this.timeoutsMap = new Map()
     setImmediate(() => {
@@ -128,6 +128,8 @@ class Nats extends Eventemitter2 {
     this.many(sub.topic, sub.options.max || Number.MAX_SAFE_INTEGER, event => {
       setImmediate(() => handler(event.payload, event.replyTo))
     })
+
+    return sub.id
   }
 
   /**

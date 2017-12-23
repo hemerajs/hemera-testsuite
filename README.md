@@ -35,6 +35,7 @@ We emulate all features of NATS server. You can run and test your service in mem
 
 - Custom queue groups
 - Special one-to-one publish
+- Multiple Hemera instances
 
 ```js
 const Nats = require('hemera-testsuite/nats')
