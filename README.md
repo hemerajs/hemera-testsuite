@@ -13,7 +13,7 @@ Helper library to write tests against NATS.
 
 ## Prerequisites
 
-Include the `PATH` to the executable gnatsd. (Only needed for integration tests)
+[Install](https://nats.io/documentation/tutorials/gnatsd-install/) NATS Server and include the path to the executable in your user `PATH` environment variable. (Only needed for integration tests)
 
 ## Installing
 
