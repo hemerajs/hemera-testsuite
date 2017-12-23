@@ -16,16 +16,19 @@ class Nats extends Eventemitter2 {
   constructor() {
     super({ delimiter: '.', wildcard: true })
     this.subId = 0
-    this.subs = new Map()
-    this.timeoutMap = new Map()
+    this.inboxId = 0
+    this.subscriptions = new Map()
+    this.timeoutsMap = new Map()
     setImmediate(() => {
       this.emit('connect')
     })
   }
 
   /**
+   * Close the NATS connection
+   * We working in-memory no need to implement this.
    *
-   *
+   * @param {any} handler
    * @memberof Nats
    */
   close(handler) {
@@ -33,22 +36,30 @@ class Nats extends Eventemitter2 {
   }
 
   /**
+   * Set a timeout on a subscription. The subscription is cancelled if the
+   * expected number of messages is reached or the timeout is reached.
    *
-   *
+   * @param {Mixed} sid
+   * @param {Number} timeout
+   * @param {Number} expected
+   * @param {any} handler
    * @memberof Nats
    */
-  timeout(sid, timeout, delay, handler) {
-    this.timeoutMap.set(sid, {
+  timeout(sid, timeout, expected, handler) {
+    this.timeoutsMap.set(sid, {
       timeout,
-      delay,
+      expected,
       handler,
       timer: setTimeout(() => handler(), timeout).unref()
     })
   }
 
   /**
+   * Publish a message to the given subject, with optional reply and callback.
    *
-   *
+   * @param {String} topic
+   * @param {String} payload
+   * @param {Function} handler
    * @memberof Nats
    */
   publish(topic, payload, handler) {
@@ -61,31 +72,40 @@ class Nats extends Eventemitter2 {
   }
 
   /**
+   * Publish a message with an implicit inbox listener as the reply. Message is optional.
+   * This should be treated as a subscription. You can optionally indicate how many
+   * messages you only want to receive using opt_options = {max:N}. Otherwise you
+   * will need to unsubscribe to stop the message stream.
+   * The Subscriber Id is returned.
    *
-   *
+   * @param {String} topic
+   * @param {String} payload
+   * @param {Object} opts
+   * @param {Function} handler
+   * @return {Mixed}
    * @memberof Nats
    */
   request(topic, payload, opts, handler) {
-    const subData = { max: opts.max || 1, id: this.subId++ }
-    const replyTo = `topic_${subData.id}`
+    const subData = {
+      max: opts.max || 1,
+      inbox: this.inboxId++
+    }
+    const replyTo = `topic_${subData.inbox}`
 
     if (subData.max === -1) {
       subData.max = Number.MAX_SAFE_INTEGER
     }
 
-    this.subs.set(replyTo, subData)
-
+    // auto unsubscribe after max messages
     this.many(replyTo, subData.max, event => {
-      const sub = this.subs.get(replyTo)
-      const timeout = this.timeoutMap.get(replyTo)
-      sub.max -= 1
+      // this only ensure that the first request was received within the timeout
+      const timeout = this.timeoutsMap.get(replyTo)
       clearTimeout(timeout.timer)
-      if (sub.max > 0) {
-        this.timeout(replyTo, timeout.timeout, timeout.delay, timeout.handler)
-      }
+      // fire handler
       setImmediate(() => handler(event.payload))
     })
 
+    // start the request with inbox channel
     this.emit(topic, { payload, replyTo })
 
     return replyTo
@@ -94,27 +114,43 @@ class Nats extends Eventemitter2 {
   /**
    *
    *
+   * @param {any} topic
+   * @param {any} opts
+   * @param {any} handler
    * @memberof Nats
    */
   subscribe(topic, opts, handler) {
     // The greater than symbol (>), also known as the full wildcard, matches one or more tokens at the tail of a subject, and must be the last token.
     topic = topic.replace(/>/g, '**')
+
+    this.subscriptions.set(this.subId++, { options: opts, handler, topic })
+
     this.many(topic, opts.max || Number.MAX_SAFE_INTEGER, event => {
-      setImmediate(() => handler(event.payload, event.replyTo))
+      for (const s of this.subscriptions.values()) {
+        if (s.options.queue === opts.queue) {
+          setImmediate(() => handler(event.payload, event.replyTo))
+          break
+        }
+      }
     })
   }
 
   /**
+   * Unsubscribe to a given Subscriber Id, with optional max parameter.
+   * Unsubscribing to a subscription that already yielded the specified number of messages
+   * will clear any pending timeout callbacks.
    *
-   *
+   * @param {Mixed} sid
+   * @param {Number} opt_max
    * @memberof Nats
    */
-  unsubscribe(topic) {
+  unsubscribe(topic, max) {
     this.removeListener(topic)
   }
 
   /**
-   *
+   * Flush all pending data to the server.
+   * We working in-memory no need to implement this.
    *
    * @param {any} cb
    * @memberof Nats

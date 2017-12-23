@@ -24,6 +24,34 @@ describe('NATS Transport emulation', function() {
     })
   })
 
+  it('Should request with multiple patterns', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add',
+          c: 3
+        },
+        req => {
+          throw new Error('test')
+        }
+      )
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add'
+        },
+        req => req.a + req.b
+      )
+      hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
+        expect(resp).to.be.equals(3)
+        done()
+      })
+    })
+  })
+
   it('Should request multiple times', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats)
@@ -38,9 +66,28 @@ describe('NATS Transport emulation', function() {
       Promise.all([
         hemera.act(`topic:math,cmd:add,a:1,b:2`),
         hemera.act(`topic:math,cmd:add,a:10,b:20`)
-      ]).then((result) => {
+      ]).then(result => {
         expect(result[0]).to.be.equals(3)
         expect(result[1]).to.be.equals(30)
+        done()
+      })
+    })
+  })
+
+  it('Should use custom queue groups', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add',
+          queue$: 'test'
+        },
+        req => req.a + req.b
+      )
+      hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
+        expect(resp).to.be.equals(3)
         done()
       })
     })
@@ -149,7 +196,9 @@ describe('NATS Transport emulation', function() {
         },
         req => {}
       )
-      hemera.act(`topic:math,cmd:add,a:1,b:2,pubsub$:true`, () => {
+      hemera.act(`topic:math,cmd:add,a:1,b:2,pubsub$:true`, (err, resp) => {
+        expect(err).to.be.not.exists()
+        expect(resp).to.be.not.exists()
         done()
       })
     })
