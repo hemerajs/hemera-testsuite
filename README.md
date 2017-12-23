@@ -31,6 +31,11 @@ We emulate all features of NATS server. You can run and test your service in mem
 - Support for request & publish
 - Support for timeouts
 
+### Not supported
+
+- Custom queue groups
+- Special one-to-one publish
+
 ```js
 const Nats = require('hemera-testsuite/nats')
 const nats = new Nats()

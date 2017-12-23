@@ -122,16 +122,11 @@ class Nats extends Eventemitter2 {
   subscribe(topic, opts, handler) {
     // The greater than symbol (>), also known as the full wildcard, matches one or more tokens at the tail of a subject, and must be the last token.
     topic = topic.replace(/>/g, '**')
+    let sub = { id: this.subId++, options: opts, handler, topic }
+    this.subscriptions.set(sub.id, sub)
 
-    this.subscriptions.set(this.subId++, { options: opts, handler, topic })
-
-    this.many(topic, opts.max || Number.MAX_SAFE_INTEGER, event => {
-      for (const s of this.subscriptions.values()) {
-        if (s.options.queue === opts.queue) {
-          setImmediate(() => handler(event.payload, event.replyTo))
-          break
-        }
-      }
+    this.many(sub.topic, sub.options.max || Number.MAX_SAFE_INTEGER, event => {
+      setImmediate(() => handler(event.payload, event.replyTo))
     })
   }
 
