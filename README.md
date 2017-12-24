@@ -35,7 +35,6 @@ We emulate all features of NATS server. You can run and test your service in mem
 
 - Custom queue groups
 - Special one-to-one publish
-- Multiple Hemera instances
 
 \**In this case we recommend to start a real NATS Server.*
 
