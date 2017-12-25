@@ -142,7 +142,7 @@ class Nats extends Eventemitter2 {
    * @memberof Nats
    */
   unsubscribe(topic, max) {
-    this.removeListener(topic)
+    this.removeAllListeners(topic)
   }
 
   /**
