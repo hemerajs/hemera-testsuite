@@ -32,7 +32,9 @@ class Nats extends Eventemitter2 {
    * @memberof Nats
    */
   close(handler) {
-    setImmediate(() => handler())
+    if (typeof handler === 'function') {
+      setImmediate(() => handler())
+    }
   }
 
   /**
@@ -122,12 +124,13 @@ class Nats extends Eventemitter2 {
   subscribe(topic, opts, handler) {
     // The greater than symbol (>), also known as the full wildcard, matches one or more tokens at the tail of a subject, and must be the last token.
     topic = topic.replace(/>/g, '**')
-    let sub = { id: this.subId++, options: opts, handler, topic }
+    let listener = event => {
+      setImmediate(() => handler(event.payload, event.replyTo))
+    }
+    let sub = { id: this.subId++, options: opts, handler, topic, listener }
     this.subscriptions.set(sub.id, sub)
 
-    this.many(sub.topic, sub.options.max || Number.MAX_SAFE_INTEGER, event => {
-      setImmediate(() => handler(event.payload, event.replyTo))
-    })
+    this.many(sub.topic, sub.options.max || Number.MAX_SAFE_INTEGER, listener)
 
     return sub.id
   }
@@ -142,7 +145,16 @@ class Nats extends Eventemitter2 {
    * @memberof Nats
    */
   unsubscribe(topic, max) {
-    this.removeAllListeners(topic)
+    if (typeof topic === 'string') {
+      this.removeAllListeners(topic)
+    } else {
+      for (const s of this.subscriptions.values()) {
+        if (s.id === topic) {
+          this.removeListener(s.topic, s.listener)
+          break
+        }
+      }
+    }
   }
 
   /**
