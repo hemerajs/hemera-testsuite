@@ -110,8 +110,14 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           maxMessages$: 1
         },
-        req => req.a + req.b
+        req => {
+          expect(nats.listeners('math').length).to.be.equal(0)
+          return req.a + req.b
+        }
       )
+
+      expect(nats.listeners('math').length).to.be.equal(1)
+
       hemera
         .act(`topic:math,a:1,b:2`)
         .then(() => hemera.act(`topic:math,a:1,b:2`))
@@ -137,12 +143,14 @@ describe('NATS Transport emulation', function() {
           }
         }
       )
+
       hemera.act(
         {
           topic: 'math',
           maxMessages$: 1
         },
-        (err, resp) => {
+        function (err, resp) {
+          expect(nats.listeners(this._sid).length).to.be.equal(0)
           done()
         }
       )
