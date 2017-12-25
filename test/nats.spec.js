@@ -193,4 +193,59 @@ describe('NATS Transport emulation', function() {
       })
     })
   })
+
+  it('Should close hemera and nats', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add'
+        },
+        req => req.a + req.b
+      )
+      hemera.close(done)
+    })
+  })
+
+  it('Should unsubscribe all subscription on close', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add'
+        },
+        req => req.a + req.b
+      )
+
+      expect(nats.listeners('math').length).to.be.equal(1)
+      hemera.close(() => {
+        expect(nats.listeners('math').length).to.be.equal(0)
+        done()
+      })
+    })
+  })
+
+  it('Should unsubscribe', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add'
+        },
+        req => req.a + req.b
+      )
+      expect(nats.listeners('math').length).to.be.equal(1)
+
+      hemera.remove('math')
+
+      expect(nats.listeners('math').length).to.be.equal(0)
+      done()
+    })
+  })
 })
