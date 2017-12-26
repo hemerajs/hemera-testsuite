@@ -35,6 +35,8 @@ We emulate all core features of NATS server. You can run and test your service i
 
 - Custom queue groups
 - Special one-to-one publish
+- Load balancing
+- Connection related states
 
 \**In this case we recommend to start a real NATS Server.*
 
