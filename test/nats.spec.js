@@ -149,7 +149,7 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           maxMessages$: 1
         },
-        function (err, resp) {
+        function(err, resp) {
           expect(nats.listeners(this._sid).length).to.be.equal(0)
           done()
         }
@@ -254,6 +254,18 @@ describe('NATS Transport emulation', function() {
 
       expect(nats.listeners('math').length).to.be.equal(0)
       done()
+    })
+  })
+
+  it('Should be ready even when nats connection was already established', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+
+    nats.on('connect', () => {
+      hemera.ready(err => {
+        expect(err).to.be.not.exists()
+        done()
+      })
     })
   })
 })

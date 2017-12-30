@@ -19,7 +19,9 @@ class Nats extends Eventemitter2 {
     this.inboxId = 1
     this.subscriptions = new Map()
     this.timeoutsMap = new Map()
+    this.connected = false
     setImmediate(() => {
+      this.connected = true
       this.emit('connect')
     })
   }
