@@ -41,6 +41,7 @@ We emulate all core features of NATS server. You can run and test your service i
 \**In this case we recommend to start a real NATS Server.*
 
 ```js
+const Hemera = require('nats-hemera')
 const Nats = require('hemera-testsuite/nats')
 const nats = new Nats()
 const hemera = new Hemera(nats, {
