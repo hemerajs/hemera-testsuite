@@ -1,8 +1,4 @@
 language: node_js
-sudo: true
-
-services:
-  - redis-server
 
 node_js:
   - "9"
