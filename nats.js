@@ -100,11 +100,21 @@ class Nats extends Eventemitter2 {
       subData.max = Number.MAX_SAFE_INTEGER
     }
 
+    if (this.listeners(replyTo).length === 0) {
+      handler({
+        code: 'REQ_TIMEOUT' // NATS CODE
+      })
+      return
+    }
+
+
     // auto unsubscribe after max messages
     this.many(replyTo, subData.max, event => {
       // this only ensure that the first request was received within the timeout
       const timeout = this.timeoutsMap.get(replyTo)
-      clearTimeout(timeout.timer)
+      if (timeout) {
+        clearTimeout(timeout.timer)
+      }
       // fire handler
       setImmediate(() => handler(event.payload))
     })
