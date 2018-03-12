@@ -27,7 +27,7 @@ We emulate all core features of NATS server. You can run and test your service i
 ### Features
 
 - Support of wildcard `*` and `>` subjects
-- Support for auto-unsubscribe after `max` messages
+- Support for maxMessages$, expectedMessages$ options
 - Support for request & publish
 - Support for timeouts
 
