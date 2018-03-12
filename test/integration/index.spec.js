@@ -19,25 +19,25 @@ describe('Starting NATS Server', function() {
       hemera = new Hemera(nats)
       hemera.ready(x => done())
     })
+  })
 
-    after(function(done) {
-      hemera.close()
-      server.kill()
+  after(function(done) {
+    hemera.close()
+    server.kill()
+    done()
+  })
+
+  it('Should produce and consume', function(done) {
+    hemera.add(
+      {
+        topic: 'math',
+        cmd: 'add'
+      },
+      req => req.a + req.b
+    )
+    hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
+      expect(resp).to.be.equals(3)
       done()
-    })
-
-    it('Should request', function(done) {
-      hemera.add(
-        {
-          topic: 'math',
-          cmd: 'add'
-        },
-        req => req.a + req.b
-      )
-      hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
-        expect(resp).to.be.equals(3)
-        done()
-      })
     })
   })
 })

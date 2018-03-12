@@ -45,14 +45,15 @@ class Nats extends Eventemitter2 {
    *
    * @param {Mixed} sid
    * @param {Number} timeout
-   * @param {Number} expected
+   * @param {Number} expectedMsg
    * @param {any} handler
    * @memberof Nats
    */
-  timeout(sid, timeout, expected, handler) {
+  timeout(sid, timeout, expectedMsg, handler) {
     this.timeoutsMap.set(sid, {
       timeout,
-      expected,
+      expectedMsg,
+      receivedMsg: 0,
       handler,
       timer: setTimeout(() => handler(), timeout).unref()
     })
@@ -94,26 +95,30 @@ class Nats extends Eventemitter2 {
       max: opts.max || 1,
       inbox: this.inboxId++
     }
+
+    // represent the sid
     const replyTo = `topic_${subData.inbox}`
 
+    // workaround to express a unlimited amount messages
     if (subData.max === -1) {
       subData.max = Number.MAX_SAFE_INTEGER
     }
 
-    if (this.listeners(replyTo).length === 0) {
+    if (this.listeners(topic).length === 0) {
       handler({
-        code: 'REQ_TIMEOUT' // NATS CODE
+        code: 'REQ_TIMEOUT' // NATS ERR CODE
       })
       return
     }
 
-
     // auto unsubscribe after max messages
     this.many(replyTo, subData.max, event => {
-      // this only ensure that the first request was received within the timeout
       const timeout = this.timeoutsMap.get(replyTo)
       if (timeout) {
-        clearTimeout(timeout.timer)
+        timeout.receivedMsg++
+        if (timeout.receivedMsg === timeout.expectedMsg) {
+          clearTimeout(timeout.timer)
+        }
       }
       // fire handler
       setImmediate(() => handler(event.payload))

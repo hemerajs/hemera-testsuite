@@ -128,6 +128,71 @@ describe('NATS Transport emulation', function() {
     })
   })
 
+  it('Should pass only count of expectedMessages$', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats, { timeout: 200 })
+    let msgCount = 0
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math'
+        },
+        function(req) {
+          this.reply(3)
+          this.reply(3)
+          this.reply(3)
+          this.reply(3)
+        }
+      )
+
+      hemera.act(
+        {
+          topic: 'math',
+          expectedMessages$: 2
+        },
+        (err, resp) => {
+          msgCount++
+          expect(err).to.be.not.exists()
+          expect(resp).to.be.equal(3)
+          if (msgCount == 2) {
+            done()
+          }
+        }
+      )
+    })
+  })
+
+  it('Should throw timeout when expectedMessages$ could not be fulfilled within the timeout', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats, { timeout: 100 })
+    let msgCount = 0
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math'
+        },
+        function(req, reply) {
+          this.reply(3)
+        }
+      )
+
+      hemera.act(
+        {
+          topic: 'math',
+          expectedMessages$: 2
+        },
+        (err, resp) => {
+          msgCount++
+          if (msgCount > 1) {
+            expect(err).to.be.exists()
+            expect(err.message).to.be.equal('Timeout')
+            done()
+          }
+        }
+      )
+    })
+  })
+
   it('Should auto unsubscribe after maxMessages$ messages defined on client-side', function(done) {
     const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
@@ -150,7 +215,7 @@ describe('NATS Transport emulation', function() {
           maxMessages$: 1
         },
         function(err, resp) {
-          expect(nats.listeners(this._sid).length).to.be.equal(0)
+          expect(nats.listeners(this.sid).length).to.be.equal(0)
           done()
         }
       )
@@ -159,9 +224,9 @@ describe('NATS Transport emulation', function() {
 
   it('Should publish one-to-many', function(done) {
     const nats = new Nats()
-    const hemera = new Hemera(nats, { logLevel: 'info' })
+    const hemera = new Hemera(nats)
     hemera.ready(function() {
-      const hemera2 = new Hemera(nats, { logLevel: 'info' })
+      const hemera2 = new Hemera(nats)
       let callCount = 0
       hemera.add(
         {

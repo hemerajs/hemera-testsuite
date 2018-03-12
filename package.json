@@ -27,9 +27,6 @@
   "dependencies": {
     "eventemitter2": "5.0.x"
   },
-  "peerDependencies": {
-    "nats-hemera": "^4.0.0"
-  },
   "devDependencies": {
     "code": "^4.1.0",
     "eslint": "^4.18.2",
