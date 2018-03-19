@@ -1,6 +1,6 @@
 {
   "name": "hemera-testsuite",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Helper library to write tests against NATS.",
   "main": "index.js",
   "scripts": {
