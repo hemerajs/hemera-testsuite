@@ -15,7 +15,9 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           cmd: 'add'
         },
-        req => req.a + req.b
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
       )
       hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
         expect(resp).to.be.equals(3)
@@ -34,9 +36,9 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           cmd: 'add'
         },
-        req => {
+        (req, cb) => {
           callCount++
-          return req.a + req.b
+          cb(null, req.a + req.b)
         }
       )
       hemera.add(
@@ -68,7 +70,9 @@ describe('NATS Transport emulation', function() {
         {
           topic: 'math.*'
         },
-        req => req.a + req.b
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
       )
       hemera.act(`topic:math.test,cmd:add,a:1,b:2`, (err, resp) => {
         expect(err).to.be.not.exists()
@@ -91,7 +95,9 @@ describe('NATS Transport emulation', function() {
         {
           topic: 'math.>'
         },
-        req => req.a + req.b
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
       )
       hemera.act(`topic:math.test.foo,cmd:add,a:1,b:2`, (err, resp) => {
         expect(err).to.be.not.exists()
@@ -110,9 +116,9 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           maxMessages$: 1
         },
-        req => {
+        (req, cb) => {
           expect(nats.listeners('math').length).to.be.equal(0)
-          return req.a + req.b
+          cb(null, req.a + req.b)
         }
       )
 
@@ -138,10 +144,10 @@ describe('NATS Transport emulation', function() {
           topic: 'math'
         },
         function(req) {
-          this.reply(3)
-          this.reply(3)
-          this.reply(3)
-          this.reply(3)
+          this.reply.next(3)
+          this.reply.next(3)
+          this.reply.next(3)
+          this.reply.next(3)
         }
       )
 
@@ -171,8 +177,8 @@ describe('NATS Transport emulation', function() {
         {
           topic: 'math'
         },
-        function(req, reply) {
-          this.reply(3)
+        function(req) {
+          this.reply.next(3)
         }
       )
 
@@ -202,9 +208,9 @@ describe('NATS Transport emulation', function() {
         {
           topic: 'math'
         },
-        (req, reply) => {
+        function (req) {
           for (let i = 0; i < 5; i++) {
-            reply(null, i)
+            this.reply.next(i)
           }
         }
       )
@@ -276,7 +282,9 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           cmd: 'add'
         },
-        req => req.a + req.b
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
       )
       hemera.close(done)
     })
@@ -291,7 +299,9 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           cmd: 'add'
         },
-        req => req.a + req.b
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
       )
 
       expect(nats.listeners('math').length).to.be.equal(1)
@@ -311,7 +321,9 @@ describe('NATS Transport emulation', function() {
           topic: 'math',
           cmd: 'add'
         },
-        req => req.a + req.b
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
       )
       expect(nats.listeners('math').length).to.be.equal(1)
 

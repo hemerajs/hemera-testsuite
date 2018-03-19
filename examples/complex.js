@@ -60,7 +60,9 @@ hemera.ready(() => {
     {
       topic: 'math.constants.*'
     },
-    () => Math.PI
+    (req, cb) => {
+      cb(null, Math.PI)
+    }
   )
 
   hemera.act(

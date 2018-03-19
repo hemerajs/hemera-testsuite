@@ -33,7 +33,9 @@ describe('Starting NATS Server', function() {
         topic: 'math',
         cmd: 'add'
       },
-      req => req.a + req.b
+      (req, cb) => {
+        cb(null, req.a + req.b)
+      }
     )
     hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
       expect(resp).to.be.equals(3)

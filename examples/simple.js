@@ -10,7 +10,9 @@ hemera.ready(function() {
       topic: 'math',
       cmd: 'add'
     },
-    req => req.a + req.b
+    function(req, cb) {
+      cb(null, req.a + req.b)
+    }
   )
   hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
     console.log(err, resp)
