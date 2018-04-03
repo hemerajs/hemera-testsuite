@@ -168,6 +168,7 @@ class Nats extends Eventemitter2 {
       for (const s of this.subscriptions.values()) {
         if (s.id === topic) {
           this.removeListener(s.topic, s.listener)
+          this.emit('unsubscribed', s.id, s.topic)
           break
         }
       }

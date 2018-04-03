@@ -128,7 +128,7 @@ describe('NATS Transport emulation', function() {
         .act(`topic:math,a:1,b:2`)
         .then(() => hemera.act(`topic:math,a:1,b:2`))
         .catch(err => {
-          expect(err.message).to.be.equal('Timeout')
+          expect(err.message).to.be.equal('Client timeout')
           done()
         })
     })
@@ -191,7 +191,7 @@ describe('NATS Transport emulation', function() {
           msgCount++
           if (msgCount > 1) {
             expect(err).to.be.exists()
-            expect(err.message).to.be.equal('Timeout')
+            expect(err.message).to.be.equal('Client timeout')
             done()
           }
         }
@@ -267,7 +267,7 @@ describe('NATS Transport emulation', function() {
     hemera.ready(function() {
       hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
         expect(err).to.be.exists()
-        expect(err.message).to.be.equal('Timeout')
+        expect(err.message).to.be.equal('Client timeout')
         done()
       })
     })
@@ -331,6 +331,32 @@ describe('NATS Transport emulation', function() {
 
       expect(nats.listeners('math').length).to.be.equal(0)
       done()
+    })
+  })
+
+  it('Should unsubscribe and emit event', function(done) {
+    const nats = new Nats()
+    const hemera = new Hemera(nats)
+    hemera.ready(function() {
+      hemera.add(
+        {
+          topic: 'math',
+          cmd: 'add'
+        },
+        (req, cb) => {
+          cb(null, req.a + req.b)
+        }
+      )
+      expect(nats.listeners('math').length).to.be.equal(1)
+
+      nats.once('unsubscribed', (sid, subject) => {
+        expect(sid).to.be.number()
+        expect(subject).to.be.equal('math')
+        expect(nats.listeners('math').length).to.be.equal(0)
+        done()
+      })
+
+      hemera.remove('math')
     })
   })
 
