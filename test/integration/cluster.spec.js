@@ -2,7 +2,7 @@
 
 const Hemera = require('nats-hemera')
 const Code = require('code')
-const NATS = require('nats')
+const Nats = require('nats')
 const HemeraTestsuite = require('./../../')
 
 const expect = Code.expect
@@ -27,7 +27,7 @@ describe('Start and connect to NATS Cluster', function() {
   before(function(done) {
     s1 = HemeraTestsuite.start_server(PORT1, function() {
       s2 = HemeraTestsuite.start_server(PORT2, function() {
-        const nats = NATS.connect({
+        const nats = Nats.connect({
           servers: [s1Url, s2Url]
         })
         hemera = new Hemera(nats)
@@ -78,7 +78,7 @@ describe('NATS Cluster dynamically', function() {
     servers = HemeraTestsuite.start_cluster([port], route_port, function() {
       expect(servers.length).to.be.equal(1)
       // connect the client
-      const nats = NATS.connect({
+      const nats = Nats.connect({
         url: 'nats://127.0.0.1:' + port,
         reconnectTimeWait: 100
       })

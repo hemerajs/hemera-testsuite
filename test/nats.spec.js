@@ -1,13 +1,13 @@
 'use strict'
 
 const Hemera = require('nats-hemera')
-const NATS = require('../nats')
+const Nats = require('../nats')
 const Code = require('code')
 const expect = Code.expect
 
 describe('NATS Transport emulation', function() {
   it('Should request', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -27,7 +27,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should request to one subscription', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     let callCount = 0
     hemera.ready(function() {
@@ -63,7 +63,7 @@ describe('NATS Transport emulation', function() {
    * The asterisk character (*) matches any token at any level of the subject.
    */
   it('Should handle wildcard subjects', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -88,7 +88,7 @@ describe('NATS Transport emulation', function() {
    * The wildcarded subject foo.> will match foo.bar or foo.bar.baz.1, but not foo.
    */
   it('Should handle > (greater than) subjects', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -108,7 +108,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should auto unsubscribe after maxMessages$ messages', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     hemera.ready(function() {
       hemera.add(
@@ -135,7 +135,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should pass only count of expectedMessages$', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     let msgCount = 0
     hemera.ready(function() {
@@ -169,7 +169,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should throw timeout when expectedMessages$ could not be fulfilled within the timeout', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 100 })
     let msgCount = 0
     hemera.ready(function() {
@@ -200,7 +200,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should auto unsubscribe after maxMessages$ messages defined on client-side', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     let count = 0
     hemera.ready(function() {
@@ -229,7 +229,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should publish one-to-many', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       const hemera2 = new Hemera(nats)
@@ -262,7 +262,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should lead to timeout', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats, { timeout: 200 })
     hemera.ready(function() {
       hemera.act(`topic:math,cmd:add,a:1,b:2`, (err, resp) => {
@@ -274,7 +274,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should close hemera and nats', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -291,7 +291,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should unsubscribe all subscription on close', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -313,7 +313,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should unsubscribe', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -335,7 +335,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should unsubscribe and emit event', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
     hemera.ready(function() {
       hemera.add(
@@ -361,7 +361,7 @@ describe('NATS Transport emulation', function() {
   })
 
   it('Should be ready even when nats connection was already established', function(done) {
-    const nats = new NATS()
+    const nats = new Nats()
     const hemera = new Hemera(nats)
 
     nats.on('connect', () => {

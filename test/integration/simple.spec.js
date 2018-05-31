@@ -2,7 +2,7 @@
 
 const Hemera = require('nats-hemera')
 const Code = require('code')
-const NATS = require('nats')
+const Nats = require('nats')
 const HemeraTestsuite = require('./../../')
 
 const expect = Code.expect
@@ -15,7 +15,7 @@ describe('Starting NATS Server', function() {
 
   before(function(done) {
     server = HemeraTestsuite.start_server(PORT, () => {
-      const nats = NATS.connect(natsUrl)
+      const nats = Nats.connect(natsUrl)
       hemera = new Hemera(nats)
       hemera.ready(x => done())
     })
